@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Operation Room Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">Operation Room API Test</h1>
+        <div id="loading" class="text-center py-8">
+            <p>Loading categories...</p>
+        </div>
+        <div id="categories" class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
+        </div>
+    </div>
+
+    <script>
+        async function testCategories() {
+            try {
+                const response = await fetch('http://localhost:3001/api/content/categories', {
+                    headers: {
+                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoxLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3Njg5NDQ0MDQsImV4cCI6MTc2OTAzMDgwNH0.jO9xWVgQwXuM_nP4vvohzuX9wgCmZLkGBM0Zu_uK6Oc'
+                    }
+                });
+                
+                const result = await response.json();
+                console.log('Categories result:', result);
+                
+                const loadingDiv = document.getElementById('loading');
+                const categoriesDiv = document.getElementById('categories');
+                
+                if (result.success && result.data) {
+                    loadingDiv.classList.add('hidden');
+                    categoriesDiv.classList.remove('hidden');
+                    
+                    result.data.forEach(category => {
+                        const categoryCard = document.createElement('div');
+                        categoryCard.className = 'bg-white rounded-lg shadow-sm border border-gray-200 p-6';
+                        categoryCard.innerHTML = `
+                            <h3 class="text-xl font-semibold mb-2">${category.name}</h3>
+                            <p class="text-gray-600 mb-4">${category.description}</p>
+                            <div class="text-sm space-y-2">
+                                <div><strong>الهدف:</strong> ${category.primary_goal}</div>
+                                <div><strong>الجمهور:</strong> ${category.primary_audience}</div>
+                                <div><strong>الأولوية:</strong> ${category.priority}</div>
+                            </div>
+                        `;
+                        categoriesDiv.appendChild(categoryCard);
+                    });
+                } else {
+                    loadingDiv.innerHTML = '<p class="text-red-600">Failed to load categories</p>';
+                }
+            } catch (error) {
+                document.getElementById('loading').innerHTML = `<p class="text-red-600">Error: ${error.message}</p>`;
+                console.error('API Error:', error);
+            }
+        }
+        
+        testCategories();
+    </script>
+</body>
+</html>
