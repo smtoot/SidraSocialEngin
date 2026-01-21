@@ -15,6 +15,10 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   },
+  // Disable Turbopack to avoid character encoding issues
+  turbopack: {
+    enabled: false,
+  },
 };
 
 module.exports = nextConfig;
